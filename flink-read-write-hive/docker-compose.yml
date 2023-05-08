@@ -1,66 +1,76 @@
 version: "2.1"
 
 services:
-  flink:
-    image: feathub-flink:latest
-    command:
-      - bash
-      - -c
-      - |
-        export HADOOP_CLASSPATH=`hadoop classpath`
-        ./bin/start-cluster.sh; while true; do sleep 10; done
-    ports:
-      - "8082:8081"
-    volumes:
-      - "flink_data:/tmp/flink"
-      - "./data:/tmp/data"
-  namenode:
-    image: bde2020/hadoop-namenode:2.0.0-hadoop2.7.4-java8
-    volumes:
-      - namenode:/hadoop/dfs/name
-    environment:
-      - CLUSTER_NAME=test
-    env_file:
-      - ./hadoop-hive.env
-    ports:
-      - "50070:50070"
-  datanode:
-    image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
-    volumes:
-      - datanode:/hadoop/dfs/data
-    env_file:
-      - ./hadoop-hive.env
-    environment:
-      SERVICE_PRECONDITION: "namenode:50070"
-    ports:
-      - "50075:50075"
-  hive-server:
-    image: bde2020/hive:2.3.2-postgresql-metastore
-    env_file:
-      - ./hadoop-hive.env
-    environment:
-      HIVE_CORE_CONF_javax_jdo_option_ConnectionURL: "jdbc:postgresql://hive-metastore/metastore"
-      SERVICE_PRECONDITION: "hive-metastore:9083"
-    ports:
-      - "10000:10000"
-  hive-metastore:
-    image: bde2020/hive:2.3.2-postgresql-metastore
-    env_file:
-      - ./hadoop-hive.env
-    command: /opt/hive/bin/hive --service metastore
-    environment:
-      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 hive-metastore-postgresql:5432"
-    ports:
-      - "9083:9083"
-  hive-metastore-postgresql:
-    image: bde2020/hive-metastore-postgresql:2.3.0
-  presto-coordinator:
-    image: shawnzhu/prestodb:0.181
-    ports:
-      - "8080:8080"
 
-volumes:
-  flink_data:
-    driver: local
-  namenode:
-  datanode:
+  hadoop-master:
+    image: prestodb/hive3.1-hive:10
+    container_name: hadoop-master1
+#    networks:
+#      - flink-hive-network
+    extra_hosts:
+      - hadoop-master1:127.0.0.1
+    ports:
+      - "9084:9083"
+#  flink:
+#    image: feathub-flink:latest
+#    command:
+#      - bash
+#      - -c
+#      - |
+#        export HADOOP_CLASSPATH=`hadoop classpath`
+#        ./bin/start-cluster.sh; while true; do sleep 10; done
+#    ports:
+#      - "8082:8081"
+#    volumes:
+#      - "flink_data:/tmp/flink"
+#      - "./data:/tmp/data"
+#  namenode:
+#    image: bde2020/hadoop-namenode:2.0.0-hadoop2.7.4-java8
+#    volumes:
+#      - namenode:/hadoop/dfs/name
+#    environment:
+#      - CLUSTER_NAME=test
+#    env_file:
+#      - ./hadoop-hive.env
+#    ports:
+#      - "50070:50070"
+#  datanode:
+#    image: bde2020/hadoop-datanode:2.0.0-hadoop2.7.4-java8
+#    volumes:
+#      - datanode:/hadoop/dfs/data
+#    env_file:
+#      - ./hadoop-hive.env
+#    environment:
+#      SERVICE_PRECONDITION: "namenode:50070"
+#    ports:
+#      - "50075:50075"
+#  hive-server:
+#    image: bde2020/hive:2.3.2-postgresql-metastore
+#    env_file:
+#      - ./hadoop-hive.env
+#    environment:
+#      HIVE_CORE_CONF_javax_jdo_option_ConnectionURL: "jdbc:postgresql://hive-metastore/metastore"
+#      SERVICE_PRECONDITION: "hive-metastore:9083"
+#    ports:
+#      - "10000:10000"
+#  hive-metastore:
+#    image: bde2020/hive:2.3.2-postgresql-metastore
+#    env_file:
+#      - ./hadoop-hive.env
+#    command: /opt/hive/bin/hive --service metastore
+#    environment:
+#      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 hive-metastore-postgresql:5432"
+#    ports:
+#      - "9083:9083"
+#  hive-metastore-postgresql:
+#    image: bde2020/hive-metastore-postgresql:2.3.0
+#  presto-coordinator:
+#    image: shawnzhu/prestodb:0.181
+#    ports:
+#      - "8080:8080"
+
+#volumes:
+#  flink_data:
+#    driver: local
+#  namenode:
+#  datanode:

@@ -1,8 +1,25 @@
+
+
 ```shell
 docker-compose up -d
 
 docker cp ~/Documents/projects/feathub/dev-spark flink:/root/
 docker cp . flink:/root/flink-read-write-hive
+
+docker cp ~/Downloads/flink-connector-hive_2.12-1.16.1.jar flink:/usr/local/lib/python3.7/site-packages/feathub/processors/flink/lib
+docker cp ~/Downloads/hive-exec-3.1.2.jar flink:/usr/local/lib/python3.7/site-packages/feathub/processors/flink/lib
+docker cp ~/Downloads/libfb303-0.9.3.jar flink:/usr/local/lib/python3.7/site-packages/feathub/processors/flink/lib
+docker cp ~/Downloads/antlr-runtime-3.5.2.jar flink:/usr/local/lib/python3.7/site-packages/feathub/processors/flink/lib
+
+docker cp ~/Downloads/flink-connector-hive_2.12-1.16.1.jar flink:/usr/local/lib/python3.7/site-packages/pyflink/lib
+docker cp ~/Downloads/hive-exec-3.1.2.jar flink:/usr/local/lib/python3.7/site-packages/pyflink/lib
+docker cp ~/Downloads/libfb303-0.9.3.jar flink:/usr/local/lib/python3.7/site-packages/pyflink/lib
+docker cp ~/Downloads/antlr-runtime-3.5.2.jar flink:/usr/local/lib/python3.7/site-packages/pyflink/lib
+
+docker cp ~/Downloads/flink-connector-hive_2.12-1.16.1.jar flink:/opt/flink/lib
+docker cp ~/Downloads/hive-exec-3.1.2.jar flink:/opt/flink/lib
+docker cp ~/Downloads/libfb303-0.9.3.jar flink:/opt/flink/lib
+docker cp ~/Downloads/antlr-runtime-3.5.2.jar flink:/opt/flink/lib
 
 python -m pip install /root/dev-spark/python/
 
@@ -16,6 +33,7 @@ flink_lib_dir=/usr/local/lib/python3.7/site-packages/pyflink/lib
 cp $feathub_lib_dir/flink-connector-hive_*.jar $flink_lib_dir
 cp $feathub_lib_dir/hive-exec-*.jar $flink_lib_dir
 cp $feathub_lib_dir/antlr-runtime-*.jar $flink_lib_dir
+cp $feathub_lib_dir/libfb303-*.jar $flink_lib_dir
 #cp $feathub_lib_dir/commons-logging-*.jar $flink_lib_dir
 #
 #cp $feathub_lib_dir/*.jar $flink_lib_dir
@@ -24,6 +42,7 @@ cp $feathub_lib_dir/antlr-runtime-*.jar $flink_lib_dir
 cp $feathub_lib_dir/flink-connector-hive_*.jar $FLINK_HOME/lib
 cp $feathub_lib_dir/hive-exec-*.jar $FLINK_HOME/lib
 cp $feathub_lib_dir/antlr-runtime-*.jar $FLINK_HOME/lib
+cp $feathub_lib_dir/libfb303-*.jar $FLINK_HOME/lib
 #cp $feathub_lib_dir/commons-logging-*.jar $FLINK_HOME/lib
 #cp ./
 
@@ -41,19 +60,19 @@ mv $FLINK_HOME/lib/flink-table-planner-loader-1.16.1.jar $FLINK_HOME/opt/flink-t
 #cp ./hadoop-mapred-0.22.0.jar $FLINK_HOME/lib
 #cp ./hadoop-mapred-0.22.0.jar $flink_lib_dir
 
-export HADOOP_VERSION=2.3.0
-export PATH=/opt/hadoop-$HADOOP_VERSION/bin/:$PATH
-
-# Download and extract hadoop binary
-cd /opt
-curl -O https://archive.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz && \
-    tar -xzvf hadoop-$HADOOP_VERSION.tar.gz
+#export HADOOP_VERSION=3.1.2
+#export PATH=/opt/hadoop-$HADOOP_VERSION/bin/:$PATH
+#
+## Download and extract hadoop binary
+#cd /opt
+#curl -O https://archive.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz && \
+#    tar -xzf hadoop-$HADOOP_VERSION.tar.gz
 export HADOOP_CLASSPATH=`hadoop classpath`
-
-apt-get update && apt-get install -y openjdk-8-jdk
-update-alternatives --install /usr/bin/java java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java 1070
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre
-export PATH=$JAVA_HOME/bin/:$PATH
+#
+#apt-get update && apt-get install -y openjdk-8-jdk
+##update-alternatives --install /usr/bin/java java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java 1070
+#export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre
+#export PATH=$JAVA_HOME/bin/:$PATH
 
 $FLINK_HOME/bin/stop-cluster.sh && $FLINK_HOME/bin/start-cluster.sh
 

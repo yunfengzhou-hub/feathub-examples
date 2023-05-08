@@ -19,7 +19,7 @@ from feathub.feathub_client import FeathubClient
 from feathub.feature_tables.sinks.hive_sink import HiveSink
 from feathub.feature_tables.sinks.mysql_sink import MySQLSink
 from feathub.feature_tables.sources.file_system_source import FileSystemSource
-from feathub.feature_tables.sources.hive_source import HiveConfig, HiveSource
+from feathub.feature_tables.sources.hive_source import HiveSource
 from feathub.feature_tables.sources.mysql_source import MySQLSource
 from feathub.feature_views.on_demand_feature_view import OnDemandFeatureView
 from feathub.table.schema import Schema
@@ -33,6 +33,7 @@ if __name__ == "__main__":
                     "rest.address": "localhost",
                     "rest.port": 8081,
                     "master": "localhost:8081",
+                    "native.parallelism.default": "1",
                 },
             },
             "online_store": {
@@ -72,22 +73,24 @@ if __name__ == "__main__":
 
     result_table = client.get_features(item_price_events_source)
 
-    hive_config = HiveConfig(
-        name="myhive",
+    hive_sink = HiveSink(
         hive_conf_dir=".",
-        default_database="default",
-        hadoop_conf_dir=".",
+        database="default",
+        extra_config={
+            'sink.partition-commit.watermark-time-zone': 'Asia/Shanghai',
+            'sink.partition-commit.policy.kind': 'metastore,success-file',
+        }
     )
-
-    hive_sink = HiveSink(hive_config)
 
     result_table.execute_insert(sink=hive_sink, allow_overwrite=True).wait()
 
     item_price_features_source = HiveSource(
         name="item_price_events",
+        database="default",
+        table="item_price_events",
         schema=item_price_events_schema,
         keys=["item_id"],
-        hive_config=hive_config,
+        hive_conf_dir=".",
     )
 
     saved_table = client.get_features(item_price_features_source)

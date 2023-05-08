@@ -2,7 +2,7 @@ version: "2.1"
 
 services:
   flink:
-    image: feathub-flink:latest
+    image: feathub-flink:java8-hadoop3.1.2
     container_name: flink
     networks:
       - flink-hive-network
@@ -18,7 +18,7 @@ services:
       - "flink_data:/tmp/flink"
       - "./data:/tmp/data"
   hadoop-master:
-    image: prestodb/hdp2.6-hive:10
+    image: prestodb/hive3.1-hive:10
     container_name: hadoop-master
     networks:
       - flink-hive-network
@@ -26,8 +26,9 @@ services:
       - hadoop-master:127.0.0.1
     ports:
       - "9083:9083"
-    volumes:
-      - "./core-site.xml:/usr/hdp/2.6.5.0-292/hadoop/conf/core-site.xml"
+#    volumes:
+#      - "./core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml"
+#      - "./core-site.xml:/usr/hdp/2.6.5.0-292/hadoop/conf/core-site.xml"
 
 networks:
   flink-hive-network:
