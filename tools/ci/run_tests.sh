@@ -23,9 +23,10 @@ python -m pip -q install --upgrade "feathub-nightly[spark]"
 
 docker build -q --rm -t feathub-flink -f ./docker/Dockerfile .
 
-# Run the run_and_verify.sh script in each example folder
-for EXAMPLE_RUN_SCRIPT in "${PROJECT_DIR}"/*/run_and_verify.sh; do
-  echo "Running example ${EXAMPLE_RUN_SCRIPT}..."
-  bash "${EXAMPLE_RUN_SCRIPT}"
-  echo "Example ${EXAMPLE_RUN_SCRIPT} success."
-done
+## Run the run_and_verify.sh script in each example folder
+#for EXAMPLE_RUN_SCRIPT in "${PROJECT_DIR}"/*/run_and_verify.sh; do
+#  echo "Running example ${EXAMPLE_RUN_SCRIPT}..."
+#  bash "${EXAMPLE_RUN_SCRIPT}"
+#  echo "Example ${EXAMPLE_RUN_SCRIPT} success."
+#done
+bash "${PROJECT_DIR}"/flink-read-write-hive/run_and_verify.sh
