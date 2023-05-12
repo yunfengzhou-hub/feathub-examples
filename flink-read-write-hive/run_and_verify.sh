@@ -32,4 +32,4 @@ docker-compose down
 
 cat data/output.json/* > data/merged_output
 
-sort_and_compare_files data/merged_output data/expected_output.txt
+sort_and_compare_files data/merged_output data/expected_output.csv
